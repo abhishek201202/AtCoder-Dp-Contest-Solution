@@ -33,19 +33,43 @@ const int N   = 5e5 + 5;
 
 
 void test_cases(){
-    
+	string k; cin >> k;
+	int d; cin >> d;
+	int n = k.size();
+    int dp[n + 1][d + 1][2];
+    memset(dp, 0, sizeof dp);
+    dp[0][0][1] = 1; 
+    for(int i = 1; i <= n; i++){
+    	for(int sum = 0; sum < d; sum ++){
+	    	for(int digit = 0; digit <= 9; digit++){
+	    		dp[i][(sum + digit)%d][0] += dp[i - 1][sum][0];	
+	    		dp[i][(sum + digit)%d][0] %= mod;
+	    	}
+
+	    	for(int digit = 0; i - 1 >= 0 && digit < k[i - 1] - '0'; digit++){
+	    		dp[i][(sum + digit)%d][0] += dp[i - 1][sum][1];
+	    		dp[i][(sum + digit)%d][0] %= mod;
+	    	}
+	    	if(i - 1 >= 0){
+	    		dp[i][(sum + k[i - 1] - '0')%d][1] += dp[i - 1][sum][1]; 
+	    		dp[i][(sum + k[i - 1] - '0')%d][1] %= mod;
+	    	}
+    	}
+    }
+    int res = (dp[n][0][0] + dp[n][0][1] - 1 + mod)%mod;
+    cout << res << endl;
 
 }
 
 
 int32_t main(){
-    // ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+    ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
     // freopen("input.txt", "r", stdin);
     // freopen("output.txt", "w", stdout);
     int tt = 1;
-    cin >> tt;
+    // cin >> tt;
     for(int T = 1; T <= tt; T++){
-        cerr << endl << "Case #" << T << ": " << endl;
+        // cerr << endl << "Case #" << T << ": " << endl;
         test_cases();
     }
 }

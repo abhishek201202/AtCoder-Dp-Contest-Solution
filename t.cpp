@@ -29,10 +29,44 @@ rb_tree_tag ,tree_order_statistics_node_update>;
 
 const int mod = 1e9 + 7;
 const int MOD = 998244353;
-const int N   = 5e5 + 5;
+const int N   = 5e3 + 5;
 
+int dp[N][N];
 
 void test_cases(){
+    int n; cin >> n;
+    string s; cin >> s;
+    memset(dp, 0, sizeof dp);
+    dp[1][1] = 1;
+    for(int len = 2; len <= n; len++){
+        vector<int> pref(n + 1, 0);
+        pref[0] = dp[len - 1][0];
+        for(int i = 1; i <= n; i++){
+            pref[i] = pref[i - 1] + dp[len - 1][i];
+        }
+
+        for(int last = 1; last <= len; last++){
+            if(s[len - 2] == '<'){
+                // for(int secondLast = 1; secondLast <= last - 1; secondLast ++){
+                //     dp[len][last] += dp[len - 1][secondLast];
+                //     dp[len][last] %= mod;
+                // }
+                dp[len][last] = (pref[last - 1] - pref[0])%mod;
+            }else if(s[len - 2] == '>'){
+                // for(int secondLast = last; secondLast <= len - 1; secondLast++){
+                //     dp[len][last] += dp[len - 1][secondLast];
+                //     dp[len][last] %= mod;
+                // }
+                dp[len][last] = (pref[len - 1] - pref[last - 1])%mod;
+            }
+        }
+    }
+    int res = 0;
+    for(int last = 1; last <= n; last ++){
+        res += dp[n][last];
+        res %= mod;
+    }
+    cout << res << endl;
     
 
 }
@@ -43,9 +77,9 @@ int32_t main(){
     // freopen("input.txt", "r", stdin);
     // freopen("output.txt", "w", stdout);
     int tt = 1;
-    cin >> tt;
+    // cin >> tt;
     for(int T = 1; T <= tt; T++){
-        cerr << endl << "Case #" << T << ": " << endl;
+        // cerr << endl << "Case #" << T << ": " << endl;
         test_cases();
     }
 }
