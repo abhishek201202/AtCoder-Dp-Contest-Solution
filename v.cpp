@@ -27,14 +27,59 @@ typedef pair<int, pii>   piii;
 template<typename T> using pbds = tree<T, null_type, less<T>, 
 rb_tree_tag ,tree_order_statistics_node_update>; 
 
-const int mod = 1e9 + 7;
 const int MOD = 998244353;
 const int N   = 5e5 + 5;
 
+int n, mod;
+vector<vector<int>> adj;
+vector<int> dp, ans;
+
+void dfs(int u, int p = -1){
+    dp[u] = 1;
+    for(int v : adj[u]){
+        if(v == p) continue;
+        dfs(v, u);
+        dp[u] *= (dp[v] + 1);
+        dp[u] %= mod;
+    }
+}
+
+void reroot(int u, int p, int res){
+    ans[u] = (res * dp[u])%mod;
+    vector<int> child;
+    for(int v : adj[u]){
+        if(v == p) continue;
+        child.push_back(v);
+    }
+    int nn = child.size();
+    vector<int> pref(nn + 1, 1), suff(nn + 1, 1);
+    for(int i = 1; i <= nn; i++){
+        pref[i] = (pref[i - 1] * (dp[child[i - 1]] + 1))%mod;
+    }
+    for(int i = nn - 1; i >= 0; i--){
+        suff[i] = (suff[i + 1] * (dp[child[i]] + 1))%mod;
+    }
+    for(int i = 0; i < nn; i++){
+        int v = child[i];
+        reroot(v, u, (1 + (res * pref[i]%mod * suff[i + 1])%mod)%mod);
+    }
+}
 
 void test_cases(){
-    
-
+    cin >> n >> mod;
+    adj = vector<vector<int>>(n, vector<int>());
+    dp = vector<int>(n, 0);
+    ans = vector<int>(n, 1);
+    for(int i = 0; i < n - 1; i++){
+        int s, d; cin >> s >> d;
+        adj[s - 1].push_back(d - 1);
+        adj[d - 1].push_back(s - 1);
+    }
+    dfs(0);
+    reroot(0, -1, 1);
+    for(int i = 0; i < n; i++){
+        cout << ans[i]%mod << endl;
+    }
 }
 
 
@@ -43,9 +88,9 @@ int32_t main(){
     // freopen("input.txt", "r", stdin);
     // freopen("output.txt", "w", stdout);
     int tt = 1;
-    cin >> tt;
+    // cin >> tt;
     for(int T = 1; T <= tt; T++){
-        cerr << endl << "Case #" << T << ": " << endl;
+        // cerr << endl << "Case #" << T << ": " << endl;
         test_cases();
     }
 }
