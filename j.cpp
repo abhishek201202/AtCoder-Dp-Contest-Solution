@@ -31,7 +31,19 @@ const int mod = 1e9 + 7;
 const int MOD = 998244353;
 const int N   = 305;
 
+/*
 
+EV(c1, c2, c3) -> ev of number of operations until the experiments terminates.
+-> 
+1 + p1*E(c1 - c2, c3) + p2*E(c1 + 1, c2 - 1, c3) + p3*E(c1, c2 + 1, c3 - 1) + p0*E(c1, c2, c3)
+-> +1, is considered for counting one operation in the transition
+
+E(c1, c2, c3) = (1 + p1*e1 + p2*e2 + p3*e3) / (1 - p0)
+p1 = c1/n
+p2 = c2/n
+p3 = c3/n
+p0 = (n - c1 - c2 - c3) / n
+*/
 
 void test_cases(){
 	int n; cin >> n;
